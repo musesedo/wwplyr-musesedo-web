@@ -1,5 +1,5 @@
-// Musesedo Premium Müzik Player
-class MusesedoPlayer {
+// musesedo Premium Müzik Player
+class musesedoPlayer {
     constructor() {
         this.audioContext = null;
         this.isPlaying = false;
@@ -41,7 +41,7 @@ class MusesedoPlayer {
         const abcNotation = `
 X:1
 T:Test Müzik Parçası
-C:Musesedo
+C:musesedo
 M:4/4
 L:1/4
 K:C
@@ -155,7 +155,7 @@ K:C
 
 // Player'ı başlat
 document.addEventListener('DOMContentLoaded', () => {
-    new MusesedoPlayer();
+    new musesedoPlayer();
 });
 
 // Mscz dosya işleme için placeholder fonksiyonlar
