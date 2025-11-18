@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Musesedo Premium Müzik Odası</title>
+    <link rel="stylesheet" href="css/player.css">
+    <!-- ABCJS kütüphanesi - müzik notasyonu için -->
+    <script src="https://cdn.jsdelivr.net/npm/abcjs@6.0.0/dist/abcjs-basic-min.js"></script>
+</head>
+<body>
+    <div class="player-container">
+        <header class="player-header">
+            <img src="images/musesedo-logo.png" alt="Musesedo" class="logo">
+            <h1>Musesedo Premium Player</h1>
+            <div class="user-menu">
+                <span>Hoş Geldiniz, Kullanıcı</span>
+            </div>
+        </header>
+
+        <main class="player-main">
+            <div class="score-viewer">
+                <div id="notation"></div>
+            </div>
+            
+            <div class="player-controls">
+                <button id="play-btn" class="control-btn">▶️ Çal</button>
+                <button id="pause-btn" class="control-btn">⏸️ Duraklat</button>
+                <button id="stop-btn" class="control-btn">⏹️ Durdur</button>
+                
+                <div class="progress-container">
+                    <input type="range" id="progress-bar" class="progress-bar" min="0" max="100" value="0">
+                    <span id="time-display">0:00 / 0:00</span>
+                </div>
+                
+                <div class="volume-control">
+                    <span>🔊</span>
+                    <input type="range" id="volume" min="0" max="100" value="50">
+                </div>
+            </div>
+            
+            <div class="file-upload">
+                <h3>Nota Yükle</h3>
+                <input type="file" id="mscz-upload" accept=".mscz,.mscx,.xml">
+                <button id="load-score">Notayı Yükle</button>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/player.js"></script>
+</body>
+</html>
