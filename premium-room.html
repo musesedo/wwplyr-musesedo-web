@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>musesedo Premium Müzik Odası</title>
     <link rel="stylesheet" href="css/player.css">
-    <!-- ABCJS kütüphanesi - müzik notasyonu için -->
+    <script src="js/mscz-processor.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/abcjs@6.0.0/dist/abcjs-basic-min.js"></script>
 </head>
 <body>
@@ -41,11 +41,12 @@
             
             <div class="file-upload">
                 <h3>Nota Yükle</h3>
-                <input type="file" id="mscz-upload" accept=".mscz,.mscx,.xml">
+                <input type="file" id="mscz-upload" accept=".mscz,.mscx,.xml,.musicxml">
                 <button id="load-score">Notayı Yükle</button>
             </div>
         </main>
     </div>
+
     <script src="js/player.js"></script>
 </body>
 </html>

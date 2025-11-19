@@ -1,0 +1,4 @@
+PROJE: wwplyr-musesedo-web
+SON_KOMUT: nano js/mscz-processor.js - .mscz işleme sistemi kurulumu
+DURUM: Player temeli tamam, .mscz processing geliştirilecek
+GITHUB_REPO: https://github.com/musesedo/wwplyr-musesedo-web

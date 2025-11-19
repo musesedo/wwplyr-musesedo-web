@@ -131,26 +131,51 @@ K:C
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     }
 
-    uploadScore() {
-        const file = this.fileUpload.files[0];
-        if (!file) {
-            alert('Lütfen bir nota dosyası seçin!');
-            return;
-        }
-
-        const reader = new FileReader();
-        
-        reader.onload = (e) => {
-            // Burada .mscz dosyasını işleyeceğiz
-            console.log('Dosya yüklendi:', file.name);
-            alert(`"${file.name}" dosyası yüklendi! (Demo modu)`);
-            
-            // Geçici olarak örnek bir ABC notasyon göster
-            this.loadExampleScore();
-        };
-        
-        reader.readAsArrayBuffer(file);
+    async uploadScore() {
+    const file = this.fileUpload.files[0];
+    if (!file) {
+        alert('Lütfen bir nota dosyası seçin!');
+        return;
     }
+
+    try {
+        // MsczProcessor'ı kullanarak dosyayı işle
+        const processor = new MsczProcessor();
+        const result = await processor.processMsczFile(file);
+        
+        if (result) {
+            // ABC notasyonunu render et
+            this.renderScore(result);
+            
+            // Metadata'yı göster
+            const metadata = processor.extractMetadata(result);
+            this.showMetadata(metadata);
+            
+            alert(`"${file.name}" başarıyla yüklendi ve işlendi!`);
+        }
+    } catch (error) {
+        console.error('Dosya işleme hatası:', error);
+        alert('Dosya işlenirken hata oluştu: ' + error.message);
+    }
+}
+
+showMetadata(metadata) {
+    console.log('Nota Bilgileri:', metadata);
+    // İleride metadata'yı arayüzde gösterebiliriz
+    const metadataDiv = document.createElement('div');
+    metadataDiv.className = 'metadata';
+    metadataDiv.innerHTML = `
+        <h4>🎵 ${metadata.title}</h4>
+        <p><strong>Besteci:</strong> ${metadata.composer}</p>
+        <p><strong>Anahtar:</strong> ${metadata.key} | <strong>Ölçü:</strong> ${metadata.meter}</p>
+    `;
+    
+    const existingMetadata = document.querySelector('.metadata');
+    if (existingMetadata) {
+        existingMetadata.remove();
+    }
+    
+    document.querySelector('.file-upload').appendChild(metadataDiv);
 }
 
 // Player'ı başlat
