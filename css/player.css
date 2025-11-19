@@ -5,127 +5,267 @@
 }
 
 body {
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f8f9fa;
+    color: #333;
     min-height: 100vh;
 }
 
-.player-container {
+.musescore-player {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    background: white;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    min-height: 100vh;
 }
 
+/* Header */
 .player-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 15px 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    backdrop-filter: blur(10px);
-}
-
-.logo {
-    .logo {
-    height: 60px;
-    width: auto;
-    border-radius: 50%;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    transition: transform 0.3s ease;
-}
-
-.logo:hover {
-    transform: scale(1.05);
-}
-}
-
-.player-main {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-}
-
-.score-viewer {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 10px;
-    padding: 20px;
-    min-height: 400px;
-    color: #333;
-}
-
-#notation {
-    width: 100%;
-    overflow-x: auto;
-}
-
-.player-controls {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    border-radius: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    align-items: center;
-    backdrop-filter: blur(10px);
-}
-
-.control-btn {
-    background: #4CAF50;
+    background: #2c3e50;
     color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background 0.3s;
+    padding: 15px 30px;
+    border-bottom: 3px solid #3498db;
 }
 
-.control-btn:hover {
-    background: #45a049;
+.header-left .logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #3498db;
 }
 
-.progress-container {
-    flex-grow: 1;
+.header-center .score-info {
+    text-align: center;
+}
+
+.score-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.score-composer {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.header-right .user-actions {
     display: flex;
-    align-items: center;
     gap: 10px;
 }
 
-.progress-bar {
-    flex-grow: 1;
-    height: 8px;
+.btn-login, .btn-premium {
+    padding: 8px 16px;
+    border: none;
     border-radius: 4px;
-    background: #ddd;
-    outline: none;
+    cursor: pointer;
+    font-size: 14px;
 }
 
+.btn-login {
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.btn-premium {
+    background: #e74c3c;
+    color: white;
+}
+
+/* Main Content */
+.player-main {
+    padding: 20px;
+}
+
+/* Score Container */
+.score-container {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.score-viewer {
+    width: 100%;
+    padding: 20px;
+}
+
+.empty-state {
+    text-align: center;
+    color: #6c757d;
+}
+
+.empty-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.empty-state h3 {
+    margin-bottom: 10px;
+    color: #495057;
+}
+
+/* Player Controls */
+.player-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 15px 20px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.control-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.control-btn {
+    padding: 10px 15px;
+    border: 1px solid #dee2e6;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s;
+}
+
+.control-btn:hover {
+    background: #f8f9fa;
+    border-color: #3498db;
+}
+
+.control-btn.large {
+    padding: 12px 20px;
+    font-size: 18px;
+    background: #3498db;
+    color: white;
+    border: none;
+}
+
+.control-btn.large:hover {
+    background: #2980b9;
+}
+
+/* Progress Bar */
+.progress-container {
+    background: white;
+    padding: 15px 20px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #e9ecef;
+    outline: none;
+    margin-bottom: 10px;
+}
+
+.progress-bar::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #3498db;
+    cursor: pointer;
+}
+
+.time-display {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #6c757d;
+}
+
+/* File Upload */
+.file-upload-section {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.upload-area {
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-align: center;
+    transition: border-color 0.3s;
+    cursor: pointer;
+}
+
+.upload-area:hover {
+    border-color: #3498db;
+}
+
+.upload-content .upload-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.upload-content h4 {
+    margin-bottom: 10px;
+    color: #495057;
+}
+
+.upload-content p {
+    color: #6c757d;
+    margin-bottom: 20px;
+}
+
+.upload-btn {
+    padding: 10px 20px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.upload-btn:hover {
+    background: #2980b9;
+}
+
+/* Volume Control */
 .volume-control {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.file-upload {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    border-radius: 10px;
-    backdrop-filter: blur(10px);
+.volume-control input {
+    width: 80px;
 }
 
-.file-upload input[type="file"] {
-    margin: 10px 0;
-    color: white;
-}
-
+/* Responsive */
 @media (max-width: 768px) {
-    .player-controls {
+    .player-header {
         flex-direction: column;
+        gap: 15px;
+        text-align: center;
     }
     
-    .progress-container {
-        width: 100%;
+    .player-controls {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .control-group {
+        justify-content: center;
     }
 }

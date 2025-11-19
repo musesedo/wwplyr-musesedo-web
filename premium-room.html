@@ -3,50 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>musesedo Premium Müzik Odası</title>
+    <title>musesedo - Premium Müzik Player</title>
     <link rel="stylesheet" href="css/player.css">
-    <script src="js/mscz-processor.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/abcjs@6.0.0/dist/abcjs-basic-min.js"></script>
 </head>
 <body>
-    <div class="player-container">
+    <div class="musescore-player">
+        <!-- Header -->
         <header class="player-header">
-            <img src="images/musesedo-logo.png" alt="musesedo" class="logo">
-            <h1>musesedo Premium Player</h1>
-            <div class="user-menu">
-                <span>Hoş Geldiniz, Kullanıcı</span>
+            <div class="header-left">
+                <div class="logo">musesedo</div>
+            </div>
+            <div class="header-center">
+                <div class="score-info">
+                    <div class="score-title">Nota Başlığı</div>
+                    <div class="score-composer">Besteci</div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="user-actions">
+                    <button class="btn-login">Giriş Yap</button>
+                    <button class="btn-premium">Premium</button>
+                </div>
             </div>
         </header>
 
+        <!-- Main Content -->
         <main class="player-main">
-            <div class="score-viewer">
-                <div id="notation"></div>
+            <!-- Nota Görüntüleme Alanı -->
+            <div class="score-container">
+                <div class="score-viewer" id="notation">
+                    <div class="empty-state">
+                        <div class="empty-icon">🎵</div>
+                        <h3>Nota Yükleyin</h3>
+                        <p>.mscz veya .mscx dosyası yükleyerek başlayın</p>
+                    </div>
+                </div>
             </div>
-            
+
+            <!-- Player Kontrolleri -->
             <div class="player-controls">
-                <button id="play-btn" class="control-btn">▶️ Çal</button>
-                <button id="pause-btn" class="control-btn">⏸️ Duraklat</button>
-                <button id="stop-btn" class="control-btn">⏹️ Durdur</button>
-                
-                <div class="progress-container">
-                    <input type="range" id="progress-bar" class="progress-bar" min="0" max="100" value="0">
-                    <span id="time-display">0:00 / 0:00</span>
+                <div class="control-group left-controls">
+                    <button class="control-btn" id="zoom-out">🔍−</button>
+                    <button class="control-btn" id="zoom-in">🔍+</button>
                 </div>
-                
-                <div class="volume-control">
-                    <span>🔊</span>
-                    <input type="range" id="volume" min="0" max="100" value="50">
+
+                <div class="control-group center-controls">
+                    <button class="control-btn large" id="play-btn">▶ Çal</button>
+                    <button class="control-btn" id="pause-btn">⏸️</button>
+                    <button class="control-btn" id="stop-btn">⏹️</button>
+                    <button class="control-btn" id="prev-btn">⏮️</button>
+                    <button class="control-btn" id="next-btn">⏭️</button>
+                </div>
+
+                <div class="control-group right-controls">
+                    <div class="volume-control">
+                        <span>🔊</span>
+                        <input type="range" id="volume" min="0" max="100" value="80">
+                    </div>
                 </div>
             </div>
-            
-            <div class="file-upload">
-                <h3>Nota Yükle</h3>
-                <input type="file" id="mscz-upload" accept=".mscz,.mscx,.xml,.musicxml">
-                <button id="load-score">Notayı Yükle</button>
+
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <input type="range" id="progress-bar" class="progress-bar" min="0" max="100" value="0">
+                <div class="time-display">
+                    <span id="current-time">0:00</span>
+                    <span id="total-time">0:00</span>
+                </div>
+            </div>
+
+            <!-- Dosya Yükleme -->
+            <div class="file-upload-section">
+                <div class="upload-area" id="upload-area">
+                    <div class="upload-content">
+                        <div class="upload-icon">📁</div>
+                        <h4>Nota Dosyası Yükle</h4>
+                        <p>.mscz, .mscx veya MusicXML formatında</p>
+                        <input type="file" id="mscz-upload" accept=".mscz,.mscx,.xml,.musicxml" hidden>
+                        <button class="upload-btn" id="upload-trigger">Dosya Seç</button>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
-
-    <script src="js/player.js"></script>
+  <script src="js/player.js"></script>
 </body>
 </html>

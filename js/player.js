@@ -1,193 +1,264 @@
-// musesedo Premium Müzik Player
-class musesedoPlayer {
+// musesedo Müzik Player
+class MusesedoPlayer {
     constructor() {
-        this.audioContext = null;
         this.isPlaying = false;
         this.currentScore = null;
         this.visualObj = null;
+        this.currentTime = 0;
+        this.totalTime = 120; // 2 dakika demo
         
         this.initializeElements();
         this.setupEventListeners();
+        this.setupUploadArea();
     }
 
     initializeElements() {
+        // Kontrol elementleri
         this.playBtn = document.getElementById('play-btn');
         this.pauseBtn = document.getElementById('pause-btn');
         this.stopBtn = document.getElementById('stop-btn');
+        this.prevBtn = document.getElementById('prev-btn');
+        this.nextBtn = document.getElementById('next-btn');
+        this.zoomInBtn = document.getElementById('zoom-in');
+        this.zoomOutBtn = document.getElementById('zoom-out');
+        
+        // Progress ve ses
         this.progressBar = document.getElementById('progress-bar');
         this.volumeControl = document.getElementById('volume');
-        this.timeDisplay = document.getElementById('time-display');
+        this.currentTimeDisplay = document.getElementById('current-time');
+        this.totalTimeDisplay = document.getElementById('total-time');
+        
+        // Notasyon
         this.notationDiv = document.getElementById('notation');
+        this.scoreTitle = document.querySelector('.score-title');
+        this.scoreComposer = document.querySelector('.score-composer');
+        
+        // Dosya yükleme
         this.fileUpload = document.getElementById('mscz-upload');
-        this.loadScoreBtn = document.getElementById('load-score');
+        this.uploadTrigger = document.getElementById('upload-trigger');
+        this.uploadArea = document.getElementById('upload-area');
     }
 
     setupEventListeners() {
+        // Player kontrolleri
         this.playBtn.addEventListener('click', () => this.play());
         this.pauseBtn.addEventListener('click', () => this.pause());
         this.stopBtn.addEventListener('click', () => this.stop());
-        this.loadScoreBtn.addEventListener('click', () => this.uploadScore());
+        this.prevBtn.addEventListener('click', () => this.previous());
+        this.nextBtn.addEventListener('click', () => this.next());
         
+        // Zoom kontrolleri
+        this.zoomInBtn.addEventListener('click', () => this.zoomIn());
+        this.zoomOutBtn.addEventListener('click', () => this.zoomOut());
+        
+        // Progress bar
+        this.progressBar.addEventListener('input', (e) => this.seek(e.target.value));
+        
+        // Ses kontrolü
         this.volumeControl.addEventListener('input', (e) => {
             this.setVolume(e.target.value / 100);
         });
 
-        // Örnek bir müzik yükle (test için)
-        this.loadExampleScore();
+        // Demo zaman güncellemesi
+        this.updateTimeDisplay();
     }
 
-    loadExampleScore() {
-        // Basit bir ABC notasyon örneği
-        const abcNotation = `
+    setupUploadArea() {
+        // Upload alanı tıklama
+        this.uploadTrigger.addEventListener('click', () => {
+            this.fileUpload.click();
+        });
+
+        this.uploadArea.addEventListener('click', () => {
+            this.fileUpload.click();
+        });
+
+        this.uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            this.uploadArea.style.borderColor = '#3498db';
+            this.uploadArea.style.background = '#f8f9fa';
+        });
+
+        this.uploadArea.addEventListener('dragleave', () => {
+            this.uploadArea.style.borderColor = '#dee2e6';
+            this.uploadArea.style.background = 'white';
+        });
+
+        this.uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            this.uploadArea.style.borderColor = '#dee2e6';
+            this.uploadArea.style.background = 'white';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                this.handleFileUpload(files[0]);
+            }
+        });
+
+        // Dosya seçimi değiştiğinde
+        this.fileUpload.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                this.handleFileUpload(e.target.files[0]);
+            }
+        });
+    }
+
+    handleFileUpload(file) {
+        console.log('Dosya yüklendi:', file.name);
+        
+        // Demo: Basit bir ABC notasyonu oluştur
+        const demoABC = this.createDemoABC(file.name);
+        this.loadScore(demoABC, file.name);
+        
+        // Upload alanını gizle, notayı göster
+        this.hideUploadArea();
+    }
+
+    createDemoABC(filename) {
+        const title = filename.replace('.mscz', '').replace('.mscx', '');
+        
+        return `
 X:1
-T:Test Müzik Parçası
-C:musesedo
+T:${title}
+C:musesedo Demo
 M:4/4
 L:1/4
 K:C
 | C D E F | G A B c | c B A G | F E D C |
+| E G B d | c A F D | C E G B | A G F E |
+| C D E F | G F E D | C C C C | G G G G |
 `;
-        this.renderScore(abcNotation);
     }
 
-    renderScore(abcNotation) {
-        // ABCJS ile notayı görselleştir
+    loadScore(abcNotation, filename) {
+        // Önceki notasyonu temizle
+        this.notationDiv.innerHTML = '';
+        
+        // ABC notasyonunu render et
         this.visualObj = ABCJS.renderAbc("notation", abcNotation, {
             responsive: "resize",
-            scale: 1.0
+            scale: 1.0,
+            staffwidth: 800
         });
         
         this.currentScore = abcNotation;
+        
+        // Başlık ve besteci bilgisini güncelle
+        this.updateScoreInfo(filename.replace('.mscz', '').replace('.mscx', ''), 'musesedo Demo');
+        
+        console.log('Nota yüklendi:', filename);
+    }
+
+    updateScoreInfo(title, composer) {
+        this.scoreTitle.textContent = title;
+        this.scoreComposer.textContent = composer;
+    }
+
+    hideUploadArea() {
+        this.uploadArea.style.display = 'none';
+    }
+
+    showUploadArea() {
+        this.uploadArea.style.display = 'block';
     }
 
     play() {
-        if (!this.audioContext) {
-            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        }
-
         this.isPlaying = true;
         this.updateControls();
+        console.log('Müzik çalınıyor...');
         
-        // Basit bir demo ses çal
-        this.playDemoSound();
-        
-        console.log("Müzik çalınıyor...");
+        // Demo: Zamanlayıcı başlat
+        this.startDemoTimer();
     }
 
     pause() {
         this.isPlaying = false;
         this.updateControls();
-        console.log("Müzik duraklatıldı");
+        console.log('Müzik duraklatıldı');
     }
 
     stop() {
         this.isPlaying = false;
+        this.currentTime = 0;
         this.progressBar.value = 0;
-        this.updateTimeDisplay(0, 100);
+        this.updateTimeDisplay();
         this.updateControls();
-        console.log("Müzik durduruldu");
+        console.log('Müzik durduruldu');
     }
 
-    playDemoSound() {
-        // Basit bir demo ses (gerçek implementasyon için Tone.js veya Web Audio API)
-        const oscillator = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
+    previous() {
+        console.log('Önceki nota');
+        // Implementasyon için
+    }
+
+    next() {
+        console.log('Sonraki nota');
+        // Implementasyon için
+    }
+
+    zoomIn() {
+        console.log('Yakınlaştır');
+        // Implementasyon için
+    }
+
+    zoomOut() {
+        console.log('Uzaklaştır');
+        // Implementasyon için
+    }
+
+    seek(position) {
+        this.currentTime = (position / 100) * this.totalTime;
+        this.updateTimeDisplay();
+        console.log('Konum değiştirildi:', position + '%');
+    }
+
+    setVolume(volume) {
+        console.log('Ses seviyesi:', Math.round(volume * 100) + '%');
+    }
+
+    startDemoTimer() {
+        if (this.demoTimer) clearInterval(this.demoTimer);
         
-        oscillator.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-        
-        oscillator.frequency.value = 440; // A4 notasının frekansı
-        gainNode.gain.value = this.volumeControl.value / 100;
-        
-        oscillator.start();
-        
-        // 1 saniye sonra durdur
-        setTimeout(() => {
-            oscillator.stop();
-            if (this.isPlaying) {
-                this.playDemoSound(); // Döngü devam etsin
+        this.demoTimer = setInterval(() => {
+            if (this.isPlaying && this.currentTime < this.totalTime) {
+                this.currentTime++;
+                const progress = (this.currentTime / this.totalTime) * 100;
+                this.progressBar.value = progress;
+                this.updateTimeDisplay();
+            } else if (this.currentTime >= this.totalTime) {
+                this.stop();
             }
         }, 1000);
     }
 
-    setVolume(volume) {
-        console.log(`Ses seviyesi: ${volume}`);
+    updateTimeDisplay() {
+        const currentMins = Math.floor(this.currentTime / 60);
+        const currentSecs = Math.floor(this.currentTime % 60);
+        const totalMins = Math.floor(this.totalTime / 60);
+        const totalSecs = Math.floor(this.totalTime % 60);
+        
+        this.currentTimeDisplay.textContent = 
+            `${currentMins}:${currentSecs.toString().padStart(2, '0')}`;
+        this.totalTimeDisplay.textContent = 
+            `${totalMins}:${totalSecs.toString().padStart(2, '0')}`;
     }
 
     updateControls() {
         this.playBtn.disabled = this.isPlaying;
         this.pauseBtn.disabled = !this.isPlaying;
-    }
-
-    updateTimeDisplay(current, total) {
-        const currentTime = this.formatTime(current);
-        const totalTime = this.formatTime(total);
-        this.timeDisplay.textContent = `${currentTime} / ${totalTime}`;
-    }
-
-    formatTime(seconds) {
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${mins}:${secs.toString().padStart(2, '0')}`;
-    }
-
-    async uploadScore() {
-    const file = this.fileUpload.files[0];
-    if (!file) {
-        alert('Lütfen bir nota dosyası seçin!');
-        return;
-    }
-
-    try {
-        // MsczProcessor'ı kullanarak dosyayı işle
-        const processor = new MsczProcessor();
-        const result = await processor.processMsczFile(file);
         
-        if (result) {
-            // ABC notasyonunu render et
-            this.renderScore(result);
-            
-            // Metadata'yı göster
-            const metadata = processor.extractMetadata(result);
-            this.showMetadata(metadata);
-            
-            alert(`"${file.name}" başarıyla yüklendi ve işlendi!`);
+        // Buton stillerini güncelle
+        if (this.isPlaying) {
+            this.playBtn.style.opacity = '0.6';
+            this.pauseBtn.style.opacity = '1';
+        } else {
+            this.playBtn.style.opacity = '1';
+            this.pauseBtn.style.opacity = '0.6';
         }
-    } catch (error) {
-        console.error('Dosya işleme hatası:', error);
-        alert('Dosya işlenirken hata oluştu: ' + error.message);
     }
-}
-
-showMetadata(metadata) {
-    console.log('Nota Bilgileri:', metadata);
-    // İleride metadata'yı arayüzde gösterebiliriz
-    const metadataDiv = document.createElement('div');
-    metadataDiv.className = 'metadata';
-    metadataDiv.innerHTML = `
-        <h4>🎵 ${metadata.title}</h4>
-        <p><strong>Besteci:</strong> ${metadata.composer}</p>
-        <p><strong>Anahtar:</strong> ${metadata.key} | <strong>Ölçü:</strong> ${metadata.meter}</p>
-    `;
-    
-    const existingMetadata = document.querySelector('.metadata');
-    if (existingMetadata) {
-        existingMetadata.remove();
-    }
-    
-    document.querySelector('.file-upload').appendChild(metadataDiv);
 }
 
 // Player'ı başlat
 document.addEventListener('DOMContentLoaded', () => {
-    new musesedoPlayer();
+    new MusesedoPlayer();
 });
-
-// Mscz dosya işleme için placeholder fonksiyonlar
-class MsczProcessor {
-    static async processMsczFile(arrayBuffer) {
-        // Gerçek .mscz işleme kodu buraya gelecek
-        console.log('Mscz dosyası işleniyor...', arrayBuffer);
-        return "X:1\nT:İşlenmiş Dosya\nK:C\n| C D E F |";
-    }
-}
